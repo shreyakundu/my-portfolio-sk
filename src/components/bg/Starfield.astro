@@ -1,0 +1,42 @@
+<div class="pointer-events-none absolute inset-0 -z-10 opacity-[var(--twinkle-opacity)]">
+  <canvas id="starfield" class="w-full h-full"></canvas>
+</div>
+
+<script>
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  let stars = [];
+
+  function rand(min, max){ return Math.random()*(max-min)+min; }
+
+  function resize(){
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width; canvas.height = rect.height;
+    const count = Math.floor((rect.width * rect.height) / 12000);
+    stars = Array.from({length: count}, () => ({
+      x: rand(0, canvas.width),
+      y: rand(0, canvas.height),
+      r: Math.random() > .9 ? 1.2 : .8,
+      a: rand(.15, .6),
+      s: rand(.001, .003)
+    }));
+  }
+
+  function draw(t=0){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (const st of stars) {
+      const tw = st.a + Math.sin(t*st.s + st.x*0.01)*0.15;
+      ctx.globalAlpha = tw;
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    addEventListener('resize', resize, { passive: true });
+    resize(); draw();
+  }
+</script>

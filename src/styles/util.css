@@ -1,0 +1,27 @@
+.container-site {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+.section { padding-block: var(--section-y); }
+
+.link {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+.bg-tech {
+  position: relative;
+  isolation: isolate;
+}
+.bg-tech::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(transparent 0 95%, color-mix(in oklab, var(--fg) 12%, transparent) 96%) 0 0/100% 24px,
+    linear-gradient(90deg, transparent 0 95%, color-mix(in oklab, var(--fg) 12%, transparent) 96%) 0 0/24px 100%;
+  opacity: var(--bg-effect-opacity);
+  mask: radial-gradient(1200px 800px at 50% 0%, #000 55%, transparent 70%);
+}
+

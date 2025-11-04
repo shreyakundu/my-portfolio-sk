@@ -1,0 +1,241 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ReadingMeta from "../components/ReadingMeta.astro";
+
+// Full original aboutText
+const aboutText = `
+I’m Shreya — a risk analyst by day and a systems thinker by dharma. 
+I fell in love with development not just for what it can build, but for how it enables us to question everything — its scalability, cost-effectiveness, and whether it should even exist in the first place.
+I started off by optimizing broken workflows in finance — poking holes in processes that didn’t make sense, and rebuilding them with Python, R, and a lot of late-night debugging. Somewhere along the way, I realized it wasn’t just the automation that thrilled me — it was the systems thinking behind it. The why, not just the how.
+Now, I’m reaching deeper. I’m building toward a future in computer science that doesn’t just explore tech for its own sake, but questions how it intersects with our innate urge to create — and the ethical scaffolding we need to do it responsibly.
+I care about the invisible stuff: incentives, consequences, guardrails, transparency. The big questions hiding inside small bits of code.
+I’m drawn to patterns — in puzzles, in LLMs, in the weird loops of human reasoning and chasing questions that don’t always have answers. I write, I build, and sometimes I break things just to see how they work.
+I’m a firm believer in building conscious systems — and the mere possibility of a conscious AI is what gets me out of bed each day.
+This site is where I put it all together. If you’re into structured chaos or AI with a conscience — welcome.
+`;
+---
+
+<Layout title="About Me">
+  <!-- Progress bar -->
+  <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-pink-500 z-50 transition-all duration-150" style="width:0"></div>
+
+  <section class="relative max-w-6xl mx-auto py-20 px-6 flex gap-12">
+    <!-- Sidebar -->
+    <aside class="hidden lg:block w-64 shrink-0 sticky top-28 h-fit">
+      <!-- CV button always first -->
+      <a
+        href="https://drive.google.com/file/d/1pYqyyf-Cfu0zAxRh63UgHcM_ftvqv98Z/view?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open CV in new tab"
+        class="block text-center px-4 py-2 mb-6 rounded-md text-sm font-medium bg-pink-600 text-white hover:bg-pink-700 transition shadow-sm"
+      >
+        CV
+      </a>
+
+      <!-- Table of contents -->
+      <nav class="space-y-3 text-sm font-medium">
+        <a href="#abstract" class="toc-link block text-gray-400 hover:text-white">Abstract</a>
+        <a href="#background" class="toc-link block text-gray-400 hover:text-white">Background</a>
+        <a href="#current-work" class="toc-link block text-gray-400 hover:text-white">Current Work</a>
+        <a href="#research-interests" class="toc-link block text-gray-400 hover:text-white">Research Interests</a>
+        <a href="#methodology" class="toc-link block text-gray-400 hover:text-white">Methodology</a>
+        <a href="#conclusion" class="toc-link block text-gray-400 hover:text-white">Conclusion</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="max-w-3xl prose prose-lg dark:prose-invert flex-1">
+      <!-- Back to Home (top) -->
+      <a 
+        href="/" 
+        class="inline-flex items-center text-sm font-medium text-pink-500 hover:text-pink-400 transition mb-4"
+      >
+        ← Back to Home
+      </a>
+
+      <h1 class="mb-2">About Me</h1>
+      <ReadingMeta text={aboutText} showProgress={true} />
+
+      <!-- Quick Nav (mobile only) -->
+      <nav class="lg:hidden flex flex-wrap gap-2 text-sm font-medium py-3 border-b border-gray-700 mb-8">
+        <!-- CV button first on mobile too -->
+        <a
+          href="https://drive.google.com/file/d/1pYqyyf-Cfu0zAxRh63UgHcM_ftvqv98Z/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3 py-1 rounded-full bg-pink-600 text-white text-sm font-medium"
+        >
+          CV
+        </a>
+
+        <a href="#abstract" class="toc-link text-gray-400 hover:text-white">Abstract</a>
+        <a href="#background" class="toc-link text-gray-400 hover:text-white">Background</a>
+        <a href="#current-work" class="toc-link text-gray-400 hover:text-white">Current Work</a>
+        <a href="#research-interests" class="toc-link text-gray-400 hover:text-white">Research Interests</a>
+        <a href="#methodology" class="toc-link text-gray-400 hover:text-white">Methodology</a>
+        <a href="#conclusion" class="toc-link text-gray-400 hover:text-white">Conclusion</a>
+      </nav>
+
+      <!-- Abstract -->
+      <h2 id="abstract">Abstract</h2>
+      <p>
+        I’m Shreya — a risk analyst by day and a systems thinker by dharma. 
+        I fell in love with development not just for what it can build, 
+        but for how it enables us to question everything — its scalability, 
+        cost-effectiveness, and whether it should even exist in the first place.
+      </p>
+
+      <!-- Background -->
+      <h2 id="background">Background</h2>
+      <p>
+        I started off by <span class="text-pink-500 font-medium">optimizing </span> broken workflows in finance — poking holes 
+        in processes that didn’t make sense, and rebuilding them with Python, R, 
+        and a lot of late-night debugging. Somewhere along the way, I realized it 
+        wasn’t just the automation that thrilled me — it was the systems thinking 
+        behind it. The <em>why</em>, not just the <em>how</em>.
+      </p>
+
+      <!-- Current Work -->
+      <h2 id="current-work">Current Work</h2>
+      <p>
+        Now, I’m reaching deeper. I’m building toward a future in computer science 
+        that doesn’t just explore tech for its own sake, but questions how it 
+        intersects with our innate urge to create — and the ethical scaffolding 
+        we need to do it responsibly.
+      </p>
+      <p>
+        I care about the invisible stuff: incentives, consequences, guardrails, 
+        transparency. <span class="text-pink-500 font-medium">The big questions hiding inside small bits of code.</span>
+      </p>
+
+      <!-- Research Interests -->
+      <h2 id="research-interests">Research Interests</h2>
+      <ul>
+        <li>Guardrails around intelligent systems</li>
+        <li>Ethical design of algorithms and incentives</li>
+        <li>Transparency and accountability in AI</li>
+        <li>Patterns in puzzles, LLMs, and human reasoning loops</li>
+      </ul>
+
+      <!-- Methodology -->
+      <h2 id="methodology">Methodology</h2>
+      <p>
+        I’m drawn to patterns — in puzzles, in LLMs, in the weird loops of human 
+        reasoning and chasing questions that don’t always have answers. I write, 
+        I build, and sometimes I break things just to see how they work.
+      </p>
+      <p>
+        I’m a firm believer in building conscious systems — <span class="text-pink-500 font-medium"> and the mere possibility 
+        of a conscious AI is what gets me out of bed each day.</span>
+      </p>
+
+      <!-- Conclusion -->
+      <h2 id="conclusion">Conclusion</h2>
+      <p>
+        This site is where I put it all together. If you’re into structured chaos 
+        or AI with a conscience — welcome.
+      </p>
+
+      <!-- Back to Home (bottom) -->
+      <a 
+        href="/" 
+        class="inline-flex items-center text-sm font-medium text-pink-500 hover:text-pink-400 transition mt-8"
+      >
+        ← Back to Home
+      </a>
+    </div>
+  </section>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    .toc-link.active { color: #ec4899; }
+
+    /* Mobile fixes: force sensible text wrapping and prevent horizontal overflow */
+    @media (max-width: 640px) {
+      .prose, .prose p, .prose li {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
+      }
+
+      /* let the quick nav wrap lines instead of forcing width */
+      nav.lg\:hidden {
+        overflow-x: visible;
+        white-space: normal;
+      }
+      nav.lg\:hidden a {
+        display: inline-block;
+        max-width: 100%;
+      }
+    }
+
+    /* Conservative safety: hide x-overflow only on smaller viewports to remove any right-side scrollbar */
+    @media (max-width: 1024px) {
+      html, body { overflow-x: hidden; }
+      section { max-width: 100%; box-sizing: border-box; }
+      .prose { max-width: 100%; box-sizing: border-box; }
+      .prose img, .prose iframe { max-width: 100%; height: auto; }
+    }
+  </style>
+
+  <script is:inline>
+    // Defensive DOM handling + scroll progress + active TOC highlighting
+    document.addEventListener('DOMContentLoaded', function () {
+      const sections = Array.from(document.querySelectorAll('h2[id]')) || [];
+      const navLinks = Array.from(document.querySelectorAll('.toc-link')) || [];
+      const progressBar = document.getElementById('progress-bar');
+
+      function getOffset() {
+        // smaller offset on narrow screens so highlights feel snappy
+        return window.innerWidth < 1024 ? 80 : 140;
+      }
+
+      function onScroll() {
+        let current = '';
+        const scrollY = window.scrollY + getOffset();
+
+        sections.forEach((section) => {
+          if (scrollY >= section.offsetTop) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+          current = 'conclusion';
+        }
+
+        navLinks.forEach((link) => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+          }
+        });
+
+        // Progress bar width
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      onScroll();
+
+      // smooth scrolling with offset for in-page links
+      navLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+          if (!href || !href.startsWith('#')) return;
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (!target) return;
+          const y = Math.max(0, target.offsetTop - (getOffset() - 20));
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        });
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,193 @@
+---
+import "../styles/global.css";
+import "../styles/tokens.css";
+import "../styles/util.css";
+
+const {
+  title = "Shreya Kundu",
+  description = "Personal website & writings",
+  url = "https://yourdomain.com",
+} = Astro.props;
+---
+
+<html lang="en" class="theme-cosmic dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Dark-only -->
+    <style>
+      :root {
+        color-scheme: dark; /* lock dark */
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: black; /* base */
+        color: #e5e7eb; /* gray-200 text */
+      }
+
+      .bg-tech {
+        position: relative;
+        isolation: isolate;
+        min-height: 100vh;
+      }
+      .bg-tech > :not(.bg-overlay) {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Purple cosmic mesh grid (intensified) */
+      .bg-tech::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image: repeating-linear-gradient(
+            to right,
+            rgba(192, 132, 252, 0.45) 0 1px,
+            transparent 1px 22px
+          ),
+          repeating-linear-gradient(
+            to bottom,
+            rgba(192, 132, 252, 0.45) 0 1px,
+            transparent 1px 22px
+          );
+        opacity: 0.35; /* brighter purple mesh */
+      }
+
+      @media (max-width: 640px) {
+        .bg-tech::before {
+          opacity: 0.25; /* keep slightly lighter for mobile readability */
+        }
+      }
+
+    </style>
+  </head>
+
+  <body class="min-h-screen antialiased text-gray-200">
+    <div class="bg-tech min-h-screen">
+      <!-- Fixed starfield -->
+      <div class="bg-overlay pointer-events-none fixed inset-0 z-0">
+        <canvas id="starfield" class="w-full h-full"></canvas>
+      </div>
+
+      <script is:inline>
+        (() => {
+          const c = document.getElementById("starfield");
+          if (!c) return;
+          const ctx = c.getContext("2d", { alpha: true });
+
+          let stars = [];
+          function resize() {
+            c.width = window.innerWidth * window.devicePixelRatio;
+            c.height = window.innerHeight * window.devicePixelRatio;
+            ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+
+            const count = Math.floor((c.width * c.height) / 9000);
+            stars = Array.from({ length: count }, () => ({
+              x: Math.random() * c.width,
+              y: Math.random() * c.height,
+              r: Math.random() > 0.9 ? 1.4 : 0.9,
+              baseAlpha: 0.5 + Math.random() * 0.4,
+              speed: 0.001 + Math.random() * 0.002,
+              phase: Math.random() * Math.PI * 2,
+              color: Math.random() < 0.3 ? "#ffe9a7" : "#ffffff",
+            }));
+          }
+
+          function draw(t = 0) {
+            ctx.clearRect(0, 0, c.width, c.height);
+            for (const s of stars) {
+              const twinkle = s.baseAlpha + Math.sin(t * s.speed + s.phase) * 0.2;
+              ctx.globalAlpha = Math.max(0, Math.min(1, twinkle));
+              ctx.beginPath();
+              ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+              ctx.fillStyle = s.color;
+              ctx.fill();
+            }
+            requestAnimationFrame(draw);
+          }
+
+          if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            window.addEventListener("resize", resize, { passive: true });
+            resize();
+            draw();
+          }
+        })();
+      </script>
+
+      <!-- Header -->
+      <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-sm shadow-sm">
+        <nav class="container-site h-14 flex items-center justify-between text-gray-200">
+          <a href="/" class="text-base sm:text-lg font-semibold hover:opacity-80">
+            Shreya Kundu
+          </a>
+
+          <!-- Desktop nav -->
+          <ul class="hidden sm:flex items-center gap-6 text-sm">
+            <li><a href="/" class="hover:opacity-80">Home</a></li>
+            <li><a href="/about" class="hover:opacity-80">About</a></li>
+            <li><a href="/projects" class="hover:opacity-80">Projects</a></li>
+            <li><a href="/blog" class="hover:opacity-80">Blog</a></li>
+            <li><a href="/contact" class="hover:opacity-80">Contact</a></li>
+          </ul>
+
+          <!-- Mobile hamburger -->
+          <button
+            id="hamburger"
+            class="sm:hidden rounded-xl p-2 hover:bg-white/10"
+            aria-label="Menu"
+            type="button"
+          >
+            ☰
+          </button>
+        </nav>
+
+        <!-- Mobile menu -->
+        <ul
+          id="mobileMenu"
+          class="hidden flex-col bg-black/90 sm:hidden text-center py-4 space-y-4"
+        >
+          <li><a href="/" class="block hover:opacity-80">Home</a></li>
+          <li><a href="/about" class="block hover:opacity-80">About</a></li>
+          <li><a href="/projects" class="block hover:opacity-80">Projects</a></li>
+          <li><a href="/blog" class="block hover:opacity-80">Blog</a></li>
+          <li><a href="/contact" class="block hover:opacity-80">Contact</a></li>
+        </ul>
+
+        <script is:inline>
+          // Hamburger toggle
+          (() => {
+            const btn = document.getElementById("hamburger");
+            const menu = document.getElementById("mobileMenu");
+            btn?.addEventListener("click", () => {
+              menu.classList.toggle("hidden");
+            });
+          })();
+        </script>
+      </header>
+
+      <!-- Main -->
+      <main>
+        <slot />
+      </main>
+
+      <!-- Footer -->
+      <footer class="container-site py-8 text-sm text-gray-400 text-center">
+        <p>© {new Date().getFullYear()} Shreya Kundu. Built with Astro 🚀</p>
+      </footer>
+    </div>
+  </body>
+</html>

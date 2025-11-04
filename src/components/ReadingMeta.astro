@@ -1,0 +1,42 @@
+---
+const { text, showProgress = true } = Astro.props;
+
+// Estimate reading time (200 wpm average)
+function readingTime(str) {
+  const words = str.trim().split(/\s+/).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} min read`;
+}
+
+const readTime = readingTime(text);
+---
+
+<!-- Progress Bar -->
+{showProgress && (
+  <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-pink-500 z-50 transition-all duration-150" style="width:0"></div>
+)}
+
+<!-- Reading Time -->
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{readTime}</p>
+
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+  .toc-link.active {
+    color: #ec4899;
+  }
+</style>
+
+<script is:inline>
+  const progressBar = document.getElementById("progress-bar");
+  if (progressBar) {
+    function onScroll() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      progressBar.style.width = progress + "%";
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+</script>

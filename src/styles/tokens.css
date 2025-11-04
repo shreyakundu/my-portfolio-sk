@@ -1,0 +1,78 @@
+:root {
+  /* brand */
+  --brand:  #6366f1; /* indigo-500 */
+
+  /* surfaces & text */
+  --bg: #ffffff;
+  --fg: #0f172a;      /* slate-900 */
+  --muted: #475569;   /* slate-600 */
+  --subtle: #64748b;  /* slate-500 */
+    /* effects */
+  --bg-effect-opacity: .10;
+  --twinkle-opacity: 0;
+
+  /* components */
+  --card: rgba(255,255,255,.85);
+
+  /* shape & shadow */
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+
+  /* rhythm */
+  --container: 72rem;                   /* 1152px */
+  --pad-x: clamp(1rem, 2vw, 1.5rem);    /* responsive side padding */
+  --section-y: clamp(3.5rem, 6vw, 5rem);
+}
+
+
+
+:root.dark {
+  --bg: #0b1020;      /* deep navy */
+  --fg: #e5e7eb;      /* light text */
+  --muted: #cbd5e1;
+  --subtle: #9aa4b2;
+  --bg-effect-opacity: .08;
+  --twinkle-opacity: .45; /* stars visible in dark */
+}
+
+
+.prose {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-links: var(--brand);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-quotes: var(--fg);
+}
+.dark .prose {
+  --tw-prose-body: var(--muted);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-links: var(--brand);
+}
+:root {
+  --accent-1: #6366f1; /* indigo-500 */
+  --accent-2: #a855f7; /* purple-500 */
+  --accent-3: #f43f5e; /* rose-500 */
+
+  /* effect toggles */
+  --bg-effect-opacity: .06;
+  --twinkle-opacity: .25;
+}
+
+/* THEME: Neural */
+.theme-neural {
+  --bg-effect-opacity: .07;
+  --twinkle-opacity: .0; /* no stars */
+}
+
+/* THEME: Cosmic */
+.theme-cosmic {
+  --bg-effect-opacity: .04;
+  --twinkle-opacity: .25; /* subtle stars */
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe { animation: none !important; transition: none !important; }
+}
+

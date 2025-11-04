@@ -1,0 +1,78 @@
+---
+const density = 10; // nodes per row/col – keep small
+---
+<svg class="pointer-events-none absolute inset-0 -z-10 opacity-30 dark:opacity-25"
+     aria-hidden="true" role="img">
+  <defs>
+    <linearGradient id="nn-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="var(--accent-1)" />
+      <stop offset="50%" stop-color="var(--accent-2)" />
+      <stop offset="100%" stop-color="var(--accent-3)" />
+    </linearGradient>
+  </defs>
+  <g class="nn-constellation"></g>
+</svg>
+
+<style>
+  .nn-constellation circle { fill: url(#nn-grad); opacity: .9 }
+  .nn-constellation line { stroke: url(#nn-grad); stroke-width: .8; opacity: .35 }
+  @keyframes drift {
+    0% { transform: translate(0,0) }
+    50% { transform: translate(-.5px, .7px) }
+    100% { transform: translate(0,0) }
+  }
+</style>
+
+<script>
+  const svg = document.currentScript.previousElementSibling;
+  const g = svg.querySelector('.nn-constellation');
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  function build() {
+    const { width, height } = svg.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    g.innerHTML = "";
+
+    const cols = Math.max(8, Math.floor(width / 120));
+    const rows = Math.max(5, Math.floor(height / 120));
+    const nodes = [];
+
+    for (let y = 0; y <= rows; y++) {
+      for (let x = 0; x <= cols; x++) {
+        const jitterX = (Math.random() - .5) * 18;
+        const jitterY = (Math.random() - .5) * 18;
+        const px = (x / cols) * width + jitterX;
+        const py = (y / rows) * height + jitterY;
+
+        nodes.push({ x: px, y: py });
+
+        const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+        c.setAttribute("cx", px); c.setAttribute("cy", py);
+        c.setAttribute("r", Math.random() > .85 ? 1.8 : 1.2);
+        c.style.animation = `drift ${10 + Math.random()*8}s ease-in-out ${Math.random()*-10}s infinite`;
+        g.appendChild(c);
+      }
+    }
+
+    // connect near neighbors
+    const maxDist = Math.hypot(width, height) / 12;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i+1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d = Math.hypot(dx, dy);
+        if (d < maxDist && Math.random() < 0.08) {
+          const l = document.createElementNS("http://www.w3.org/2000/svg","line");
+          l.setAttribute("x1", nodes[i].x); l.setAttribute("y1", nodes[i].y);
+          l.setAttribute("x2", nodes[j].x); l.setAttribute("y2", nodes[j].y);
+          g.appendChild(l);
+        }
+      }
+    }
+  }
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    addEventListener('resize', build, { passive: true });
+    requestAnimationFrame(build);
+  }
+</script>

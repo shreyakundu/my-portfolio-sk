@@ -1,0 +1,82 @@
+---
+import Layout from "../../layouts/Layout.astro"; 
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+posts.sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
+
+const tints = [
+  "bg-[#FEF9C3] dark:bg-[#FACC15]", // warm soft yellow → golden pastel
+  "bg-[#FBCFE8] dark:bg-[#EC4899]", // pink pastel → rose pop
+  "bg-[#BAE6FD] dark:bg-[#38BDF8]", // baby blue → aqua pastel
+  "bg-[#BBF7D0] dark:bg-[#34D399]", // mint green → fresh jade
+  "bg-[#E9D5FF] dark:bg-[#A855F7]", // lavender → soft violet
+];
+
+const tapes = [
+  "bg-gray-200 dark:bg-gray-600",
+  "bg-red-200 dark:bg-red-600",
+  "bg-blue-200 dark:bg-blue-600",
+  "bg-yellow-200 dark:bg-yellow-600",
+  "bg-pink-200 dark:bg-pink-600",
+];
+
+function randomClass(i) {
+  const rotations = ["-rotate-2", "-rotate-1", "rotate-0", "rotate-1", "rotate-2"];
+  const paddings = ["p-4", "p-5", "p-6"];
+  const shadows = ["shadow-sm", "shadow-md", "shadow-lg"];
+  return {
+    rotation: rotations[i % rotations.length],
+    padding: paddings[i % paddings.length],
+    shadow: shadows[i % shadows.length],
+  };
+}
+---
+
+<Layout>
+  <section class="py-20 max-w-6xl mx-auto">
+    <h1 class="text-4xl font-bold mb-10 text-center">Blogs</h1>
+
+    <!-- Grid with content-sized notes -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
+      {posts.map((post, i) => {
+        const tint = tints[i % tints.length];
+        const tape = tapes[i % tapes.length];
+        const { rotation, padding, shadow } = randomClass(i);
+
+        return (
+        <article
+        class={`relative rounded-xl ${padding} ${rotation} ${shadow} ${tint} 
+                transform transition duration-300 cursor-pointer 
+                hover:rotate-0 hover:-translate-y-2 hover:scale-105 hover:shadow-xl
+                bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] 
+                bg-[size:20px_20px]`}
+      >
+        <!-- Tape -->
+        <span
+          class={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 
+                    w-16 h-4 ${tape} opacity-80 rotate-[-5deg] rounded-sm`}
+        ></span>
+
+        <a
+          href={post.data.external ?? `/blog/${post.slug}/`}
+          target={post.data.external ? "_blank" : "_self"}
+          class="block space-y-3"
+        >
+          <h2 class="text-xl font-bold text-gray-800 dark:text-gray-900">
+            {post.data.title}
+          </h2>
+          <p class="text-sm text-gray-700 dark:text-gray-800">
+            {post.data.date}
+          </p>
+          <p class="text-gray-800 dark:text-gray-900">
+            {post.data.description}
+          </p>
+        </a>
+      </article>
+
+        );
+      })}
+    </div>
+  </section>
+</Layout>

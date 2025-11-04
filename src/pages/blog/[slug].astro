@@ -1,0 +1,145 @@
+---
+// src/pages/blog/[slug].astro
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import ReadingMeta from "../../components/ReadingMeta.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const posts = await getCollection("blog");
+
+// Sort by date (newest first)
+posts.sort(
+  (a, b) =>
+    new Date(b.data.date || b.data.pubDate) -
+    new Date(a.data.date || a.data.pubDate)
+);
+
+const index = posts.findIndex((p) => p.slug === slug);
+const post = posts[index];
+if (!post) throw new Error(`Post not found: ${slug}`);
+
+// Prev/Next posts
+const prevPost = posts[index + 1] || null; // older
+const nextPost = posts[index - 1] || null; // newer
+
+// Render MDX → Content + headings
+const rendered = await post.render();
+const Content = rendered.Content;
+const headings = rendered.headings ?? [];
+
+function readingTime(text) {
+  const words = (text ?? "").trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} min read`;
+}
+---
+
+<Layout title={post.data.title} description={post.data.description ?? ""}>
+  <section class="relative max-w-6xl mx-auto py-20 px-6 flex gap-12">
+
+    <!-- Sidebar TOC (desktop only) -->
+    {headings.length > 0 && (
+      <aside class="hidden lg:block w-56 shrink-0 sticky top-28 h-fit">
+        <nav class="space-y-2 text-sm">
+          {headings.map((h) => (
+            <a
+              href={"#" + (h.id ?? h.slug ?? h.text.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}
+              class="toc-link block text-gray-400 hover:text-white ml-{h.depth === 3 ? '4' : '0'}"
+            >
+              {h.text}
+            </a>
+          ))}
+        </nav>
+      </aside>
+    )}
+
+    <!-- Main Article -->
+    <article class="prose prose-lg dark:prose-invert max-w-3xl flex-1 relative">
+
+      <!-- Sticky Back to Blog -->
+      <div class="sticky top-20 mb-6 z-10">
+        <a href="/blog"
+           class="inline-flex items-center gap-2 text-sm text-pink-500 hover:underline bg-[color:var(--bg)]/80 backdrop-blur-sm px-2 py-1 rounded-md">
+          ← Back to Blog
+        </a>
+      </div>
+
+      <!-- Title -->
+      <h1 class="mb-2">{post.data.title}</h1>
+
+      <!-- Reading time + progress bar -->
+      <ReadingMeta text={post.body} showProgress={true} />
+
+      <!-- Date + reading time inline -->
+      {(post.data.date || post.data.pubDate) && (
+        <p class="text-sm text-muted mb-6">
+          {new Date(post.data.date || post.data.pubDate).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })} · {readingTime(post.body)}
+        </p>
+      )}
+
+      <!-- Render MDX content -->
+      <div>
+        <Content />
+      </div>
+
+      <!-- Prev/Next Navigation -->
+      <div class="mt-12 pt-6 border-t border-gray-700 flex justify-between text-sm">
+        {prevPost ? (
+          <a href={prevPost.data.external ?? `/blog/${prevPost.slug}/`}
+             target={prevPost.data.external ? "_blank" : "_self"}
+             class="text-gray-400 hover:text-white max-w-[45%]">
+            ← {prevPost.data.title}
+          </a>
+        ) : <span />}
+
+        {nextPost ? (
+          <a href={nextPost.data.external ?? `/blog/${nextPost.slug}/`}
+             target={nextPost.data.external ? "_blank" : "_self"}
+             class="text-gray-400 hover:text-white text-right max-w-[45%]">
+            {nextPost.data.title} →
+          </a>
+        ) : <span />}
+      </div>
+    </article>
+  </section>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    .toc-link.active { color: #ec4899; }
+  </style>
+
+  <script is:inline>
+    const tocLinks = document.querySelectorAll(".toc-link");
+    const headingEls = document.querySelectorAll("h2[id], h3[id]");
+
+    function onScroll() {
+      const scrollY = window.scrollY + 140;
+      let current = "";
+
+      headingEls.forEach(h => {
+        if (scrollY >= h.offsetTop) current = h.id || h.getAttribute("id");
+      });
+
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+        const last = headingEls[headingEls.length - 1];
+        if (last) current = last.id || last.getAttribute("id");
+      }
+
+      tocLinks.forEach(link => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === "#" + current) link.classList.add("active");
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+  </script>
+</Layout>

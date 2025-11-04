@@ -1,0 +1,327 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+// Fetch posts
+const posts = await getCollection("blog");
+
+// Normalize date field: use .date or .pubDate
+posts.sort(
+  (a, b) =>
+    new Date(b.data.date || b.data.pubDate) -
+    new Date(a.data.date || a.data.pubDate)
+);
+
+// Collect unique tags robustly
+let allTags = [
+  ...new Set(
+    posts.flatMap((p) => {
+      const t = p.data.tags;
+      if (Array.isArray(t)) return t;
+      if (typeof t === "string") return [t];
+      return [];
+    })
+  ),
+];
+
+// Reading time util
+function readingTime(text) {
+  const words = text?.trim().split(/\s+/).length || 0;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} min read`;
+}
+---
+
+<Layout title="Blog Archive">
+  <section class="max-w-6xl mx-auto py-12 px-4 lg:py-20 lg:px-6 flex gap-12">
+    <!-- Sidebar tags (desktop) -->
+    <aside class="hidden lg:block w-56 shrink-0 sticky top-28 h-fit" aria-label="Blog filters">
+      <h2 class="text-lg font-semibold mb-4">Filter by Tag</h2>
+      <ul class="space-y-2 text-sm" role="list">
+        <li>
+          <button
+            class="tag-btn px-3 py-1 rounded-md bg-gray-800 transition text-white w-full text-left"
+            data-tag="all"
+            aria-pressed="true"
+          >
+            All
+          </button>
+        </li>
+        {allTags.map((tag) => (
+          <li>
+            <button
+              class="tag-btn px-3 py-1 rounded-md bg-gray-800 transition text-white w-full text-left"
+              data-tag={tag}
+              aria-pressed="false"
+            >
+              {tag}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 min-w-0">
+      <a href="/" class="inline-flex items-center text-sm font-medium text-pink-500 hover:text-pink-400 transition mb-4">
+        ← Back to Home
+      </a>
+
+      <h1 class="text-3xl md:text-4xl font-bold mb-6 text-center lg:text-left">Blog Archive</h1>
+
+      <!-- Mobile tags (horizontal scroll) -->
+      <div class="lg:hidden mb-6">
+        <div class="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2" role="toolbar" aria-label="Filter posts by tag">
+          <button
+            class="tag-btn px-3 py-1 rounded-full bg-gray-800 transition text-white text-sm whitespace-nowrap"
+            data-tag="all"
+            aria-pressed="true"
+          >
+            All
+          </button>
+          {allTags.map((tag) => (
+            <button
+              class="tag-btn px-3 py-1 rounded-full bg-gray-800 transition text-white text-sm whitespace-nowrap"
+              data-tag={tag}
+              aria-pressed="false"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div class="mb-8">
+        <label for="search" class="sr-only">Search posts</label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search posts — try keywords, titles, or excerpts"
+          class="w-full px-4 py-3 rounded-md bg-gray-900/50 border border-gray-700 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-pink-500"
+          aria-label="Search posts"
+        />
+      </div>
+
+      <!-- Posts list -->
+      <div id="posts" class="space-y-6">
+        {posts.length === 0 ? (
+          <p class="text-gray-400">No posts found.</p>
+        ) : (
+          posts.map((post) => {
+            const href = post.data.external ?? `/blog/${post.slug}/`;
+            const isExternal = !!post.data.external;
+
+            const tags = Array.isArray(post.data.tags)
+              ? post.data.tags
+              : post.data.tags
+              ? [post.data.tags]
+              : [];
+
+            return (
+              <article
+                class="post group bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-xl overflow-hidden transition hover:shadow-lg"
+                data-tags={tags.join(" ")}
+                data-title={String(post.data.title || "").toLowerCase()}
+                data-desc={String(post.data.description || "").toLowerCase()}
+                aria-labelledby={`post-title-${post.slug}`}
+              >
+                <a
+                  href={href}
+                  target={isExternal ? "_blank" : "_self"}
+                  rel={isExternal ? "noopener noreferrer" : ""}
+                  class="block p-6"
+                >
+                  <header class="mb-3">
+                    <h2 id={`post-title-${post.slug}`} class="text-2xl font-semibold mb-2">{post.data.title}</h2>
+                    <div class="text-sm text-gray-400 flex flex-wrap gap-4 items-center">
+                      {post.data.date || post.data.pubDate ? (
+                        <span>
+                          {new Date(post.data.date || post.data.pubDate).toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </span>
+                      ) : null}
+                      <span>· {readingTime(post.body)}</span>
+                    </div>
+                  </header>
+
+                  <p class="text-gray-300 mb-4 line-clamp-3">{post.data.description}</p>
+
+                  {tags.length > 0 && (
+                    <footer class="mt-2 flex flex-wrap gap-2">
+                      {tags.map((tag) => (
+                        <span class="px-2 py-1 text-xs rounded-md bg-gray-800 text-gray-300">{tag}</span>
+                      ))}
+                    </footer>
+                  )}
+                </a>
+              </article>
+            );
+          })
+        )}
+      </div>
+
+      <a href="/" class="inline-flex items-center text-sm font-medium text-pink-500 hover:text-pink-400 transition mt-12 block">
+        ← Back to Home
+      </a>
+    </div>
+  </section>
+
+  <style>
+    /* core */
+    html { scroll-behavior: smooth; }
+    /* Prevent horizontal overflow on small screens */
+    @media (max-width: 1024px) {
+      html, body { overflow-x: hidden; }
+      section { max-width: 100%; box-sizing: border-box; padding-left: 1rem; padding-right: 1rem; }
+    }
+
+    /* card / typography */
+    .post a { text-decoration: none; }
+    .post h2 { color: #f8fafc; }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* tag active visuals (both pill & sidebar) */
+    .tag-btn[aria-pressed="true"] {
+      background-color: #db2777; /* pink-600 */
+      color: white;
+      outline: 2px solid transparent;
+    }
+
+    /* make large tap targets on mobile */
+    .tag-btn {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      cursor: pointer;
+    }
+
+    /* small visual polish */
+    .tag-btn:focus { outline: 2px solid rgba(219,39,119,0.25); outline-offset: 2px; }
+    .post { transition: transform 120ms ease, box-shadow 120ms ease; }
+    .post:hover { transform: translateY(-4px); }
+
+    /* ensure images/videos inside posts don't overflow if present */
+    .post img, .post iframe { max-width: 100%; height: auto; display:block; }
+
+    /* ensure main column can shrink to avoid pushing sidebar on narrow widescreens */
+    .min-w-0 { min-width: 0; }
+  </style>
+
+  <script is:inline>
+    // Client-side behaviour: filter by tag + search (debounced), accessible state toggles
+    (function () {
+      const posts = Array.from(document.querySelectorAll(".post"));
+      const search = document.getElementById("search");
+      const tagButtons = Array.from(document.querySelectorAll(".tag-btn"));
+      let activeTag = "all";
+
+      // Normalize a string for robust comparisons (lowercase, remove punctuation)
+      function norm(str) {
+        return (str || "").toLowerCase().replace(/[^\w\s-]/g, "").trim();
+      }
+
+      function matchesQuery(postEl, query) {
+        if (!query) return true;
+        const title = norm(postEl.dataset.title || "");
+        const desc = norm(postEl.dataset.desc || "");
+        return title.includes(query) || desc.includes(query);
+      }
+
+      function matchesTag(postEl, tag) {
+        if (!tag || tag === "all") return true;
+        const tags = (postEl.dataset.tags || "").split(/\s+/).map(t => norm(t));
+        return tags.includes(norm(tag));
+      }
+
+      function filterPosts() {
+        const q = norm(search?.value || "");
+        let anyVisible = false;
+
+        posts.forEach((post) => {
+          const show = matchesQuery(post, q) && matchesTag(post, activeTag);
+          post.style.display = show ? "" : "none";
+          if (show) anyVisible = true;
+        });
+
+        // optional empty-state handling
+        if (!anyVisible) {
+          if (!document.getElementById("no-results")) {
+            const el = document.createElement("p");
+            el.id = "no-results";
+            el.className = "text-gray-400 mt-4";
+            el.textContent = "No posts match your search or selected tag.";
+            document.getElementById("posts").appendChild(el);
+          }
+        } else {
+          const n = document.getElementById("no-results");
+          if (n) n.remove();
+        }
+      }
+
+      // debounce helper
+      function debounce(fn, wait = 250) {
+        let t;
+        return function (...args) {
+          clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), wait);
+        };
+      }
+
+      const debouncedFilter = debounce(filterPosts, 180);
+
+      // search input
+      search?.addEventListener("input", debouncedFilter);
+
+      // tag button wiring (works for both mobile and desktop)
+      tagButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // update activeTag based on clicked button
+          activeTag = btn.dataset.tag;
+
+          // update aria-pressed + visual classes
+          tagButtons.forEach((b) => {
+            const isActive = b.dataset.tag === activeTag;
+            b.setAttribute("aria-pressed", isActive ? "true" : "false");
+          });
+
+          // ensure clicked tag is keyboard-focus-friendly
+          btn.focus({ preventScroll: true });
+
+          // run filter
+          filterPosts();
+        });
+
+        // keyboard activation (Enter/Space)
+        btn.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            btn.click();
+          }
+        });
+      });
+
+      // quick accessibility: allow pressing "/" to focus the search input (like many sites)
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "/" && document.activeElement !== search) {
+          e.preventDefault();
+          search?.focus();
+        }
+      });
+
+      // initial filter pass (sets correct states)
+      filterPosts();
+    })();
+  </script>
+</Layout>

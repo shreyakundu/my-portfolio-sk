@@ -1,16 +1,184 @@
 ---
-
+import Layout from "../layouts/Layout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <section class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden font-mono px-6">
+    <!-- Tagline -->
+    <h1 class="text-2xl sm:text-4xl font-semibold text-center mb-10 max-w-3xl leading-snug text-gray-200">
+      Navigating AI’s faultlines — 
+      part builder, part critic, always questioning 
+      <span class="text-pink-400">what we unleash.</span>
+    </h1>
+
+
+
+      <!-- Subtle Hacker Glow Behind Terminal -->
+      <div class="absolute w-[500px] h-[500px] rounded-full bg-emerald-400/10 blur-3xl animate-pulse-slow"></div>
+
+      <!-- Glass Terminal Overlay -->
+      <div class="bg-black/60 backdrop-blur-sm rounded-xl shadow-lg p-6 w-full max-w-2xl z-10 border border-emerald-400/20 max-h-[70vh] overflow-y-auto">
+        <!-- Boot log -->
+        <p id="boot-log" class="mb-6 text-xs text-green-400 opacity-80 whitespace-pre-line"></p>
+
+        <!-- Intro (smaller text size, hacker vibe) -->
+        <div id="intro" class="text-green-400 opacity-0 mb-8 text-sm leading-relaxed">
+          <p>> Identity: <span class="font-semibold glitch" data-text="Shreya Kundu">Shreya Kundu</span></p>
+          <p>> Classification: Responsible AI Explorer | Risk Analyst | Systems Thinker</p>
+          <p>> Status: Curator of code, chaos, and responsibility</p>
+          <p>> Directive: <span class="glitch" data-text="Explore responsibly. Question relentlessly.">Explore responsibly. Question relentlessly.</span></p>
+        </div>
+
+
+        <!-- Index List -->
+        <div id="menu" class="space-y-3 opacity-0 transition-colors duration-700 text-green-400 text-sm">
+          <a href="/about" class="block group">
+            <span class="opacity-70">[1]</span>
+            <span class="ml-2 group-hover:text-pink-400 transition">About</span>
+          </a>
+          <a href="/projects" class="block group">
+            <span class="opacity-70">[2]</span>
+            <span class="ml-2 group-hover:text-pink-400 transition">Projects</span>
+          </a>
+          <a href="/blog" class="block group">
+            <span class="opacity-70">[3]</span>
+            <span class="ml-2 group-hover:text-pink-400 transition">Blog</span>
+          </a>
+          <a href="/contact" class="block group">
+            <span class="opacity-70">[4]</span>
+            <span class="ml-2 group-hover:text-pink-400 transition">Contact</span>
+          </a>
+        </div>
+
+        <!-- Footer prompt -->
+        <p id="footer-prompt" class="mt-8 text-xs opacity-0 text-green-400">
+          > Select an entry or press a number key █
+        </p>
+      </div>
+
+    
+  </section>
+
+  <style>
+    section {
+      animation: fadeIn 1.2s ease;
+    }
+    a {
+      text-decoration: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Menu + footer switch pink after boot */
+    .pink-mode {
+      color: #ec4899 !important;
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+    /* Glitch effect */
+    .glitch {
+      position: relative;
+      display: inline-block;
+      color: #22c55e; /* neon green */
+      animation: glitch-skew 1s infinite linear alternate-reverse;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      clip: rect(0, 900px, 0, 0);
+    }
+    .glitch::before {
+      animation: glitch-anim 2s infinite linear alternate-reverse;
+      color: #ec4899; /* pink glitch */
+    }
+    .glitch::after {
+      animation: glitch-anim2 3s infinite linear alternate-reverse;
+      color: #6366f1; /* indigo glitch */
+    }
+    @keyframes glitch-anim {
+      0% { clip: rect(0, 9999px, 0, 0); transform: translate(-2px, -2px); }
+      20% { clip: rect(0, 9999px, 100%, 0); transform: translate(2px, 2px); }
+      40% { clip: rect(0, 9999px, 0, 0); transform: translate(-2px, 0); }
+      60% { clip: rect(0, 9999px, 100%, 0); transform: translate(2px, -1px); }
+      80% { clip: rect(0, 9999px, 0, 0); transform: translate(-1px, 2px); }
+      100% { clip: rect(0, 9999px, 100%, 0); transform: translate(0, -2px); }
+    }
+    @keyframes glitch-anim2 {
+      0% { clip: rect(0, 9999px, 0, 0); transform: translate(2px, 1px); }
+      20% { clip: rect(0, 9999px, 100%, 0); transform: translate(-2px, -1px); }
+      40% { clip: rect(0, 9999px, 0, 0); transform: translate(1px, 2px); }
+      60% { clip: rect(0, 9999px, 100%, 0); transform: translate(-1px, -2px); }
+      80% { clip: rect(0, 9999px, 0, 0); transform: translate(2px, 0); }
+      100% { clip: rect(0, 9999px, 100%, 0); transform: translate(-2px, 1px); }
+    }
+    @keyframes glitch-skew {
+      0% { transform: skew(0deg); }
+      100% { transform: skew(1deg); }
+    }
+  </style>
+
+  <script is:inline>
+  const bootLogEl = document.getElementById("boot-log");
+  const introEl = document.getElementById("intro");
+  const menuEl = document.getElementById("menu");
+  const footerEl = document.getElementById("footer-prompt");
+
+  
+
+  // Responsible AI Explorer boot log
+  const bootLines = [
+  "> Accessing Archive...",
+  "> Decrypting Index...",
+  "> Ready."
+];
+
+
+  let lineIndex = 0;
+  let charIndex = 0;
+
+  function typeLine() {
+    if (lineIndex < bootLines.length) {
+      if (charIndex < bootLines[lineIndex].length) {
+        bootLogEl.textContent += bootLines[lineIndex][charIndex];
+        charIndex++;
+        setTimeout(typeLine, 40);
+      } else {
+        bootLogEl.textContent += "\n";
+        lineIndex++;
+        charIndex = 0;
+        setTimeout(typeLine, 300);
+      }
+    } else {
+      // Reveal intro, menu, footer
+      introEl.style.opacity = "1";
+      menuEl.style.opacity = "1";
+      footerEl.style.opacity = "0.7";
+
+      // Switch menu + footer to pink
+      setTimeout(() => {
+        menuEl.classList.add("pink-mode");
+        footerEl.classList.add("pink-mode");
+      }, 1000);
+    }
+  }
+
+  typeLine();
+
+  // Keyboard shortcuts
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "1") window.location.href = "/about";
+    if (e.key === "2") window.location.href = "/projects";
+    if (e.key === "3") window.location.href = "/blog";
+    if (e.key === "4") window.location.href = "/contact";
+  });
+</script>
+
+</Layout>
